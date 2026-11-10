@@ -1,0 +1,25 @@
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "CaixaVerso2025"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+  app:
+    build: .
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:sqlserver://mssql:1433;databaseName=DesafioAPI"
+      QUARKUS_DATASOURCE_USERNAME: "sa"
+      QUARKUS_DATASOURCE_PASSWORD: "CaixaVerso2025"
+    depends_on:
+      - mssql
+    ports:
+      - "8080:8080"
+
+volumes:
+  mssql-data:
