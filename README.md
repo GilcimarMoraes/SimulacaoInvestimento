@@ -1,6 +1,6 @@
-# desafio_api
+# painel-investimento
 
-## Projeto desenvolvido por Ivan de Bastos Sousa para PSI CaixaVerso
+## Projeto desenvolvido para Semana de Arquitetura do CaixaVerso
 
 ### Usuário e senha para acesso ao sistema
 
