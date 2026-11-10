@@ -12,6 +12,55 @@
 - Senha: user
 
 
+### Banco de dados
+
+A aplicação usa PostgreSQL. Por padrão:
+
+- URL: `jdbc:postgresql://localhost:5432/simulacao-investimento`
+- Usuário: `postgres`
+- Senha: `admin`
+
+Crie o banco antes de subir:
+
+```bash
+createdb simulacao-investimento
+```
+
+As variáveis `DB_URL`, `DB_USER` e `DB_PASSWORD` sobrescrevem esses valores.
+
+O schema e o seed (`src/main/resources/import.sql`) são criados automaticamente
+na inicialização (`quarkus.hibernate-orm.schema-management.strategy=drop-and-create`).
+Em produção, troque por Flyway/Liquibase para não recriar as tabelas a cada start.
+
+### Login (API)
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:8080/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"usuario":"admin","senha":"admin"}')
+
+curl -H "Authorization: Bearer $TOKEN" \
+  http://localhost:8080/investimentos/1
+```
+
+O login retorna o JWT em texto puro. Use `Authorization: Bearer <token>` nas rotas
+protegidas.
+
+### Chaves JWT
+
+`publicKey.pem` e `privateKey.pem` formam o par de demonstração usado para assinar
+e validar os tokens. Para um ambiente real, gere um novo par, mantenha a chave
+privada fora do repositório e injete-a via secret/volume.
+
+### Testes
+
+```bash
+./mvnw test
+```
+
+A suíte inclui um teste de integração que sobe a aplicação com H2 e valida o
+login (`AutenticacaoResourceTest`).
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
