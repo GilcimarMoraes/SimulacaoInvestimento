@@ -15,6 +15,8 @@ public interface ProdutoRepository {
 
     Optional<ProdutoEntity> findByName(String nome);
 
+    Optional<ProdutoEntity> findByTipo(String tipo);
+
     List<ProdutoEntity> findValidByParams(BigDecimal valor, int prazoMeses, String tipoProduto);
 
     ProdutoEntity persistProduto(ProdutoEntity produto);

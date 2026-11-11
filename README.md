@@ -18,7 +18,7 @@ A aplicação usa PostgreSQL. Por padrão:
 
 - URL: `jdbc:postgresql://localhost:5432/simulacao-investimento`
 - Usuário: `postgres`
-- Senha: `admin`
+- Senha: `157157` (padrão atual em `application.properties`)
 
 Crie o banco antes de subir:
 
@@ -46,6 +46,18 @@ curl -H "Authorization: Bearer $TOKEN" \
 O login retorna o JWT em texto puro. Use `Authorization: Bearer <token>` nas rotas
 protegidas.
 
+### Simulação de investimento
+
+```bash
+curl -s -X POST http://localhost:8080/simular-investimento \
+  -H 'Content-Type: application/json' \
+  -d '{"clienteId":123,"valor":10000.00,"prazoMeses":12,"tipoProduto":"CDB"}'
+```
+
+O produto é validado pelo `tipoProduto` informado (primeiro produto do tipo,
+ordenado por id). O `valorFinal` é calculado com juros compostos a partir da
+rentabilidade anual do produto validado.
+
 ### Chaves JWT
 
 `publicKey.pem` e `privateKey.pem` formam o par de demonstração usado para assinar
@@ -58,8 +70,9 @@ privada fora do repositório e injete-a via secret/volume.
 ./mvnw test
 ```
 
-A suíte inclui um teste de integração que sobe a aplicação com H2 e valida o
-login (`AutenticacaoResourceTest`).
+A suíte inclui testes de integração que sobem a aplicação com H2 e validam o
+login (`AutenticacaoResourceTest`) e o contrato dos sete endpoints
+(`ContratoApiTest`).
 
 ## Running the application in dev mode
 

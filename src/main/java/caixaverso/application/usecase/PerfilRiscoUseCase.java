@@ -67,7 +67,7 @@ public class PerfilRiscoUseCase {
             descricao = "Busca maior rentabilidade e assume mais risco.";
         } else if (pontuacao >= 30) {
             perfil = "Moderado";
-            descricao = "Equilíbrio entre segurança e rentabilidade.";
+            descricao = "Perfil equilibrado entre segurança e rentabilidade.";
         } else {
             perfil = "Conservador";
             descricao = "Prioriza segurança e liquidez.";

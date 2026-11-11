@@ -174,11 +174,12 @@ class ProdutoRepositoryImplTest {
         ProdutoRepositoryImpl spyRepo = spy(repository);
 
         List<ProdutoEntity> lista = List.of(new ProdutoEntity());
-        doReturn(lista).when(spyRepo).buscarPorRisco(List.of("Médio"));
+        doReturn(lista).when(spyRepo).buscarPorRisco(List.of("Baixo", "Médio"));
 
         List<ProdutoEntity> result = spyRepo.buscarPorPerfil(PerfilRiscoEnum.MODERADO);
 
         assertEquals(lista, result);
+        verify(spyRepo, times(1)).buscarPorRisco(List.of("Baixo", "Médio"));
     }
 
     @Test
@@ -186,11 +187,12 @@ class ProdutoRepositoryImplTest {
         ProdutoRepositoryImpl spyRepo = spy(repository);
 
         List<ProdutoEntity> lista = List.of(new ProdutoEntity());
-        doReturn(lista).when(spyRepo).buscarPorRisco(List.of("Alto"));
+        doReturn(lista).when(spyRepo).buscarPorRisco(List.of("Baixo", "Médio", "Alto"));
 
         List<ProdutoEntity> result = spyRepo.buscarPorPerfil(PerfilRiscoEnum.AGRESSIVO);
 
         assertEquals(lista, result);
+        verify(spyRepo, times(1)).buscarPorRisco(List.of("Baixo", "Médio", "Alto"));
     }
 
     @Test

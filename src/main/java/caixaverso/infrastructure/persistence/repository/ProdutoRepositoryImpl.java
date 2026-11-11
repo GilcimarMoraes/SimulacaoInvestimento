@@ -9,6 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -27,6 +28,12 @@ public class ProdutoRepositoryImpl implements ProdutoRepository, PanacheReposito
     @Override
     public Optional<ProdutoEntity> findByName(String nome) {
         return find("nome", nome).firstResultOptional();
+    }
+
+    @Override
+    public Optional<ProdutoEntity> findByTipo(String tipo) {
+        return find("lower(tipo) = ?1 order by id", tipo.toLowerCase(Locale.ROOT))
+                .firstResultOptional();
     }
 
     @Override
@@ -61,10 +68,12 @@ public class ProdutoRepositoryImpl implements ProdutoRepository, PanacheReposito
 
     @Override
     public List<ProdutoEntity> buscarPorPerfil(PerfilRiscoEnum perfil) {
+        // Recomenda produtos até o limite de risco do perfil:
+        // conservador = Baixo; moderado = Baixo + Médio; agressivo = todos.
         return switch (perfil) {
             case CONSERVADOR -> buscarPorRisco(List.of("Baixo"));
-            case MODERADO -> buscarPorRisco(List.of("Médio"));
-            case AGRESSIVO -> buscarPorRisco(List.of("Alto"));
+            case MODERADO -> buscarPorRisco(List.of("Baixo", "Médio"));
+            case AGRESSIVO -> buscarPorRisco(List.of("Baixo", "Médio", "Alto"));
             default -> Collections.emptyList();
         };
     }

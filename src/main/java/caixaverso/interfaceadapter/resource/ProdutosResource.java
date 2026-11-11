@@ -28,9 +28,6 @@ public class ProdutosResource {
     @RolesAllowed({"Admin", "User"})
     public Response recomendar(@PathParam("perfil") PerfilRiscoEnum perfil) {
         List<ProdutoDTO> produtos = produtoUseCase.buscarProdutosPorPerfil(perfil);
-        if (produtos.isEmpty()) {
-            return Response.ok("Nenhum produto encontrato").build();
-        }
         return Response.ok(produtos).build();
     }
 }

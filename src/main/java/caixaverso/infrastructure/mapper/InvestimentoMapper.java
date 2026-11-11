@@ -13,7 +13,6 @@ public class InvestimentoMapper {
 
         return new InvestimentoDTO(
                 entity.getId(),
-                entity.getClienteId(),
                 entity.getTipo(),
                 entity.getValor(),
                 entity.getRentabilidade(),

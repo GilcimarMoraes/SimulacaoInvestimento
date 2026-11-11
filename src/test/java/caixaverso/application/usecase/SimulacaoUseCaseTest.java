@@ -70,7 +70,7 @@ class SimulacaoUseCaseTest {
         produto.setNome("CDB Premium");
         produto.setRentabilidade(new BigDecimal("0.12")); // 12% aa
 
-        when(produtoRepository.findByName("CDB Premium"))
+        when(produtoRepository.findByTipo("CDB Premium"))
                 .thenReturn(Optional.of(produto));
 
         SimulacaoEntity salvo = new SimulacaoEntity();
@@ -92,7 +92,7 @@ class SimulacaoUseCaseTest {
 
     @Test
     void deveFalharSimularInternoQuandoProdutoNaoExiste() {
-        when(produtoRepository.findByName("XPTO"))
+        when(produtoRepository.findByTipo("XPTO"))
                 .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () ->
@@ -103,7 +103,7 @@ class SimulacaoUseCaseTest {
     @Test
     void deveSimularComSucesso() {
         SimulacaoRequestDTO req =
-                new SimulacaoRequestDTO(1L, new BigDecimal("1000"), 12, "CDB Caixa 2026");
+                new SimulacaoRequestDTO(1L, new BigDecimal("1000"), 12, "CDB");
 
         ProdutoEntity produto = new ProdutoEntity();
         produto.setNome("CDB Caixa 2026");
@@ -111,7 +111,7 @@ class SimulacaoUseCaseTest {
         produto.setRentabilidade(new BigDecimal("0.10"));
         produto.setRisco("Baixo");
 
-        when(produtoRepository.findByName("CDB Caixa 2026"))
+        when(produtoRepository.findByTipo("CDB"))
                 .thenReturn(Optional.of(produto));
 
         doNothing().when(simulacaoRepository).salvar(any(SimulacaoEntity.class));

@@ -89,7 +89,7 @@ class SimulacaoRepositoryImplTest {
         assertEquals("CDB", dto.produto());
         assertEquals(LocalDate.of(2025, 1, 10), dto.data());
         assertEquals(2L, dto.quantidadeSimulacoes());
-        assertEquals(new BigDecimal("1500"), dto.mediaValorFinal());
+        assertEquals(new BigDecimal("1500.00"), dto.mediaValorFinal());
     }
 
     @Test
@@ -139,7 +139,7 @@ class SimulacaoRepositoryImplTest {
         List<SimulacaoAgrupadaResponseDTO> result = repository.agruparPorProdutoDia();
 
         assertEquals(1, result.size());
-        assertEquals(BigDecimal.ZERO, result.get(0).mediaValorFinal());
+        assertEquals(new BigDecimal("0.00"), result.get(0).mediaValorFinal());
     }
 
     @Test

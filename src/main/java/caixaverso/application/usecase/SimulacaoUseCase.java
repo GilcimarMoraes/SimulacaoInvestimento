@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @ApplicationScoped
@@ -47,11 +48,11 @@ public class SimulacaoUseCase {
                 .toList();
     }
 
-    public SimulacaoEntity simularInterno(Long clienteId, BigDecimal valor, int prazoMeses, String nomeProduto) {
+    public SimulacaoEntity simularInterno(Long clienteId, BigDecimal valor, int prazoMeses, String tipoProduto) {
+        return simularInterno(clienteId, valor, prazoMeses, buscarProdutoPorTipo(tipoProduto));
+    }
 
-        ProdutoEntity produto = produtoRepositoryImpl.findByName(nomeProduto)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-
+    private SimulacaoEntity simularInterno(Long clienteId, BigDecimal valor, int prazoMeses, ProdutoEntity produto) {
         BigDecimal mensal = converterTaxaAnualParaMensal(produto.getRentabilidade());
         BigDecimal valorFinal = calcularJurosCompostos(valor, mensal, prazoMeses);
 
@@ -61,7 +62,7 @@ public class SimulacaoUseCase {
         entity.setValorFinal(valorFinal);
         entity.setRentabilidadeEfetiva(produto.getRentabilidade());
         entity.setPrazoMeses(prazoMeses);
-        entity.setDataSimulacao(Instant.now());
+        entity.setDataSimulacao(Instant.now().truncatedTo(ChronoUnit.SECONDS));
         entity.setClienteId(clienteId);
 
         simulacaoRepository.salvar(entity);
@@ -71,11 +72,12 @@ public class SimulacaoUseCase {
     public SimulacaoResponseDTO simular(SimulacaoRequestDTO request) {
         Long inicio = System.currentTimeMillis();
 
+        ProdutoEntity produto = buscarProdutoPorTipo(request.tipoProduto());
         SimulacaoEntity entity = simularInterno(
                 request.clienteId(),
-                request.valorInvestido(),
+                request.valor(),
                 request.prazoMeses(),
-                request.produto()
+                produto
         );
 
         Long fim = System.currentTimeMillis();
@@ -88,11 +90,12 @@ public class SimulacaoUseCase {
 
         telemetriaRepository.salvar(dadosTelemetria);
 
-        return responseMapper.toResponse(
-            entity,
-            produtoRepositoryImpl.findByName(request.produto())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado")
-        ));
+        return responseMapper.toResponse(entity, produto);
+    }
+
+    private ProdutoEntity buscarProdutoPorTipo(String tipoProduto) {
+        return produtoRepositoryImpl.findByTipo(tipoProduto)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado para o tipo: " + tipoProduto));
     }
 
     private BigDecimal converterTaxaAnualParaMensal(BigDecimal taxaAnual) {

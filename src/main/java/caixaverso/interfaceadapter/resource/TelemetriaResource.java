@@ -15,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Map;
 
 @Path("/telemetria")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,26 +45,14 @@ public class TelemetriaResource {
 
         TelemetriaPeriodoDTO periodo = new TelemetriaPeriodoDTO(comeco, fim);
 
-        List<TelemetriaItemDTO> itens = telemetriaRepositoryImpl.agrupaPorServicoEPeriodo(comeco, fim);
-
-        if (fim .isBefore(comeco)) {
+        if (fim.isBefore(comeco)) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("""
-                    {
-                      "mensagem": "O parâmetro 'fim' deve ser maior ou igual ao parâmetro 'comeco'."
-                    }
-                    """).build();
+                    .entity(Map.of("mensagem",
+                            "O parâmetro 'fim' deve ser maior ou igual ao parâmetro 'comeco'."))
+                    .build();
         }
 
-        if (itens.isEmpty()) {
-            return Response.status(Response.Status.OK)
-                    .entity("""
-                    {
-                      "mensagem": "Nenhum dado de telemetria encontrado."
-                    }
-                    """).build();
-        }
-
+        List<TelemetriaItemDTO> itens = telemetriaRepositoryImpl.agrupaPorServicoEPeriodo(comeco, fim);
         TelemetriaResponseDTO response = new TelemetriaResponseDTO(itens, periodo);
 
         return Response.ok(response).build();

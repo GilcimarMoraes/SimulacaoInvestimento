@@ -43,14 +43,6 @@ public class SimulacaoResource {
     public Response listarTodos(@QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("20") int size) {
         List<SimulacaoHistoricoDTO> simulacoes = simulacaoUseCase.listarTodos(page, size);
-        if (simulacoes.isEmpty()) {
-            return Response.status(Response.Status.OK)
-                    .entity("""
-                    {
-                      "mensagem": "Nenhuma simulação encontrada."
-                    }
-                    """).build();
-        }
         return Response.ok(simulacoes).build();
     }
 
@@ -59,14 +51,6 @@ public class SimulacaoResource {
     @RolesAllowed("Admin")
     public Response listarAgregacao() {
         List<SimulacaoAgrupadaResponseDTO> agregacoes = simulacaoUseCase.agregacaoPorProdutoDia();
-        if (agregacoes.isEmpty()) {
-            return Response.status(Response.Status.OK)
-                    .entity("""
-                    {
-                      "mensagem": "Nenhuma simulação encontrada."
-                    }
-                    """).build();
-        }
         return Response.ok(agregacoes).build();
     }
 }
